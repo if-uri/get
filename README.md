@@ -109,3 +109,13 @@ records:
 185.199.110.153
 185.199.111.153
 ```
+
+## Verify the installer (optional)
+
+```bash
+curl -fsSLO https://get.ifuri.com/node.sh
+curl -fsSL  https://get.ifuri.com/node.sh.sha256 | sha256sum -c -   # expects: node.sh: OK
+bash node.sh --help            # inspect before running; use --no-start / --dry-run to preview
+```
+
+Short link: **https://get.ifuri.com/app** → latest desktop release.
