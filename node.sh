@@ -365,9 +365,9 @@ if [ "$BACKGROUND" -eq 1 ]; then
   nohup "$RUNNER" > "$LOG_FILE" 2>&1 &
   printf '==> urirun node started in background, pid=%s\n' "$!"
   printf 'log: %s\n' "$LOG_FILE"
-  "$VENV_DIR/bin/python" - "$PORT" "$NODE_IP" "$REGISTRY" "$LOG_FILE" <<'PY'
+  "$VENV_DIR/bin/python" - "$PORT" "$NODE_IP" "$BINDINGS" "$LOG_FILE" <<'PY'
 import json, sys, time, urllib.request
-port, ip, registry, log = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+port, ip, bindings, log = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 for _ in range(20):
     try:
         urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1).read()
@@ -378,8 +378,8 @@ else:
     print(f"==> Warning: node not healthy yet; check {log}")
     sys.exit(0)
 try:
-    doc = json.load(open(registry, encoding="utf-8"))
-    routes = list((doc.get("routes") or doc.get("index") or doc.get("bindings") or {}).keys())
+    doc = json.load(open(bindings, encoding="utf-8"))
+    routes = list((doc.get("bindings") or {}).keys())
 except Exception:
     routes = []
 print(f"==> Node healthy: {len(routes)} URI route(s)")
