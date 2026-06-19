@@ -19,7 +19,7 @@
   var IFURI = "https://ifuri.com";
   var CONNECT = "https://connect.ifuri.com";
   var GET = "https://get.ifuri.com";
-  var DOCS = "https://ifuri.com/urirun/";
+  var DOCS = "https://docs.ifuri.com";
   function view(v) { return IFURI + "/?view=" + v + "&lang=" + lang; }
 
   // [pl, en, href, key]
@@ -38,6 +38,7 @@
   function isActive(key) {
     if (host === "connect.ifuri.com") return key === "connect";
     if (host === "get.ifuri.com") return key === "download";
+    if (host === "docs.ifuri.com") return key === "docs";
     if (host === "ifuri.com") {
       if (key === "docs") return /urirun|\/docs/.test(location.pathname);
       return key === curView;
