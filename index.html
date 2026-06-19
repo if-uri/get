@@ -345,6 +345,28 @@
       <section>
         <div class="section-head">
           <div>
+            <span class="eyebrow">Node · usługa</span>
+            <h2>Boot service (Linux / macOS)</h2>
+          </div>
+          <button type="button" data-copy-target="cmd-service">Kopiuj</button>
+        </div>
+        <pre><code id="cmd-service">curl -fsSL https://get.ifuri.com/node.sh | bash -s -- --name laptop --service</code></pre>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Windows</span>
+            <h2>Install + run (PowerShell)</h2>
+          </div>
+          <button type="button" data-copy-target="cmd-windows">Kopiuj</button>
+        </div>
+        <pre><code id="cmd-windows">irm https://get.ifuri.com/node.ps1 | iex</code></pre>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
             <span class="eyebrow">Host</span>
             <h2>Dodaj node do mesh</h2>
           </div>
@@ -381,6 +403,10 @@ urirun host agents</code></pre>
             <button type="button" data-copy-text="https://get.ifuri.com/node.sh">Kopiuj URL</button>
           </li>
           <li class="link-item">
+            <a href="https://get.ifuri.com/node.ps1" id="url-ps1">https://get.ifuri.com/node.ps1</a>
+            <button type="button" data-copy-text="https://get.ifuri.com/node.ps1">Kopiuj URL</button>
+          </li>
+          <li class="link-item">
             <a href="https://github.com/if-uri/get" id="url-repo">https://github.com/if-uri/get</a>
             <button type="button" data-copy-text="https://github.com/if-uri/get">Kopiuj URL</button>
           </li>
@@ -395,6 +421,11 @@ urirun host agents</code></pre>
 
     <footer>
       `node.sh` instaluje `urirun` z GitHuba, tworzy bindings v2, kompiluje registry i startuje lokalny node HTTP.
+      <p class="eco-links">
+        <a href="https://ifuri.com" rel="noopener">ifuri.com</a> ·
+        <a href="https://connect.ifuri.com" rel="noopener">connectory</a> ·
+        <a href="https://ifuri.com/urirun/" rel="noopener">dokumentacja</a>
+      </p>
     </footer>
   </main>
 
