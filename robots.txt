@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://get.ifuri.com/sitemap.xml
