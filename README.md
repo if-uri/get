@@ -85,9 +85,27 @@ export OPENAI_API_KEY=...
 
 ## Fallback URL
 
-If DNS for `get.ifuri.com` is not ready yet, the same script is available from
-GitHub Pages:
+If DNS for `get.ifuri.com` is not ready yet, use the raw GitHub URL:
 
 ```bash
-curl -fsSL https://if-uri.github.io/get/node.sh | bash
+curl -fsSL https://raw.githubusercontent.com/if-uri/get/main/node.sh | bash
+```
+
+## Domain setup
+
+GitHub Pages is configured for `get.ifuri.com` from the repository root.
+The DNS record for `get.ifuri.com` must point to GitHub Pages:
+
+```txt
+get.ifuri.com. CNAME if-uri.github.io.
+```
+
+or, if the DNS provider does not support CNAME on this host, use GitHub Pages A
+records:
+
+```txt
+185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153
 ```
