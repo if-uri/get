@@ -12,6 +12,7 @@ START_NODE=1
 BACKGROUND=0
 EXECUTE=1
 PORT_EXPLICIT=0
+UPGRADE=0
 
 usage() {
   cat <<'USAGE'
@@ -30,6 +31,7 @@ Options:
   --background      Start node with nohup and return.
   --dry-run         Start node without executing command routes.
   --no-start        Install and configure, but do not start the node.
+  --upgrade         Reuse existing venv: upgrade urirun, recompile, restart if running.
   --help            Show this help.
 
 Environment:
@@ -95,6 +97,10 @@ while [ "$#" -gt 0 ]; do
       START_NODE=0
       shift
       ;;
+    --upgrade)
+      UPGRADE=1
+      shift
+      ;;
     --help|-h)
       usage
       exit 0
@@ -123,6 +129,29 @@ REGISTRY="$INSTALL_DIR/registry.json"
 NODE_CONFIG="$INSTALL_DIR/node.json"
 RUNNER="$INSTALL_DIR/run-node.sh"
 LOG_FILE="$INSTALL_DIR/node.log"
+
+if [ "$UPGRADE" -eq 1 ]; then
+  [ -d "$VENV_DIR" ] || die "no existing install at $INSTALL_DIR (run without --upgrade first)"
+  printf '==> Upgrading urirun node at %s\n' "$INSTALL_DIR"
+  "$VENV_DIR/bin/python" -m pip install --upgrade pip >/dev/null
+  "$VENV_DIR/bin/python" -m pip install --upgrade "$URIRUN_GIT_URL"
+  if [ -f "$BINDINGS" ]; then
+    "$VENV_DIR/bin/urirun" validate "$BINDINGS" >/dev/null
+    "$VENV_DIR/bin/urirun" compile "$BINDINGS" --out "$REGISTRY" >/dev/null
+  fi
+  VER="$("$VENV_DIR/bin/python" -c 'import importlib.metadata as m; print(m.version("urirun"))' 2>/dev/null || echo '?')"
+  printf '==> urirun is now %s\n' "$VER"
+  SERVE_MATCH="urirun node serve --config $NODE_CONFIG"
+  if pgrep -f "$SERVE_MATCH" >/dev/null 2>&1; then
+    pkill -f "$SERVE_MATCH" || true
+    sleep 1
+    nohup "$RUNNER" > "$LOG_FILE" 2>&1 &
+    printf '==> Restarted running node, pid=%s (log: %s)\n' "$!" "$LOG_FILE"
+  else
+    printf '==> Node is not running; start it with: %s\n' "$RUNNER"
+  fi
+  exit 0
+fi
 
 port_is_free() {
   "$PYTHON_PATH" - "$BIND" "$1" <<'PY' >/dev/null 2>&1
@@ -336,7 +365,28 @@ if [ "$BACKGROUND" -eq 1 ]; then
   nohup "$RUNNER" > "$LOG_FILE" 2>&1 &
   printf '==> urirun node started in background, pid=%s\n' "$!"
   printf 'log: %s\n' "$LOG_FILE"
-  printf 'health: http://%s:%s/health\n' "$NODE_IP" "$PORT"
+  "$VENV_DIR/bin/python" - "$PORT" "$NODE_IP" "$REGISTRY" "$LOG_FILE" <<'PY'
+import json, sys, time, urllib.request
+port, ip, registry, log = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+for _ in range(20):
+    try:
+        urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1).read()
+        break
+    except Exception:
+        time.sleep(0.5)
+else:
+    print(f"==> Warning: node not healthy yet; check {log}")
+    sys.exit(0)
+try:
+    doc = json.load(open(registry, encoding="utf-8"))
+    routes = list((doc.get("routes") or doc.get("index") or doc.get("bindings") or {}).keys())
+except Exception:
+    routes = []
+print(f"==> Node healthy: {len(routes)} URI route(s)")
+for r in routes[:12]:
+    print("  ", r)
+print(f"LAN: http://{ip}:{port}/  (health: /health)")
+PY
 else
   printf '==> Starting urirun node in foreground on %s:%s\n' "$BIND" "$PORT"
   printf 'Press Ctrl-C to stop.\n\n'
