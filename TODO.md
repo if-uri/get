@@ -2,6 +2,11 @@
 
 ## Installer roadmap
 
+- [ ] Implement IFURI-019: add host/node install bundles and a `doctor` command
+      that checks Python, service status, LAN reachability, hub access,
+      Docker/noVNC prerequisites and firewall hints.
+- [ ] Add a bundle for "demo lab" that installs the connector set used by the
+      full host-node Docker matrix.
 - [x] Add an explicit `--connectors` option to install selected connector
       packages during node bootstrap. (node.sh `--connectors`, bindings merged)
 - [x] Print a ready-to-copy `urirun host add-node ...` command after a
