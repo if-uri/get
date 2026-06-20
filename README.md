@@ -212,7 +212,7 @@ Short link: **https://get.ifuri.com/app** → latest desktop release.
 
 ## Related projects
 
-- Runtime: [tellmesh/urirun](https://github.com/tellmesh/urirun)
+- Runtime: [if-uri/urirun](https://github.com/if-uri/urirun)
 - App/host: [if-uri/app](https://github.com/if-uri/app)
 - Public docs: [if-uri/docs](https://github.com/if-uri/docs)
 - Connector hub: [connect.ifuri.com](https://connect.ifuri.com)

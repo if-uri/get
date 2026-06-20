@@ -46,7 +46,7 @@ Install and run an urirun node (Windows).
   exit 0
 }
 
-$GitUrl = "git+https://github.com/tellmesh/urirun.git@$Ref#subdirectory=adapters/python"
+$GitUrl = "git+https://github.com/if-uri/urirun.git@$Ref#subdirectory=adapters/python"
 $NodeName = ($Name -replace '[^A-Za-z0-9_.-]', '-').ToLower().Trim('-')
 if (-not $NodeName) { $NodeName = "node" }
 

@@ -8,7 +8,7 @@ set -Eeuo pipefail
 # nodes on the LAN. Pairs with node.sh (which installs a node).
 
 URIRUN_REF="${URIRUN_REF:-v0.3.14}"
-URIRUN_GIT_URL="${URIRUN_GIT_URL:-git+https://github.com/tellmesh/urirun.git@${URIRUN_REF}#subdirectory=adapters/python}"
+URIRUN_GIT_URL="${URIRUN_GIT_URL:-git+https://github.com/if-uri/urirun.git@${URIRUN_REF}#subdirectory=adapters/python}"
 INSTALL_DIR="${URIRUN_HOST_DIR:-$HOME/.urirun-host}"
 HOST_NAME="${URIRUN_HOST_NAME:-$(hostname 2>/dev/null || echo host)}"
 PYTHON_BIN="${PYTHON:-python3}"

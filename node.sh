@@ -5,7 +5,7 @@
 set -Eeuo pipefail
 
 URIRUN_REF="${URIRUN_REF:-v0.3.14}"
-URIRUN_GIT_URL="${URIRUN_GIT_URL:-git+https://github.com/tellmesh/urirun.git@${URIRUN_REF}#subdirectory=adapters/python}"
+URIRUN_GIT_URL="${URIRUN_GIT_URL:-git+https://github.com/if-uri/urirun.git@${URIRUN_REF}#subdirectory=adapters/python}"
 INSTALL_DIR="${URIRUN_NODE_DIR:-$HOME/.urirun-node}"
 NODE_NAME="${URIRUN_NODE_NAME:-$(hostname 2>/dev/null || echo node)}"
 PORT="${URIRUN_NODE_PORT:-8765}"
