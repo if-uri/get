@@ -23,6 +23,8 @@
   var CONNECT = "https://connect.ifuri.com";
   var GET = "https://get.ifuri.com";
   var DOCS = "https://docs.ifuri.com";
+  var ROADMAP = "https://roadmap.ifuri.com";
+  var EXAMPLES = "https://examples.ifuri.com";
   function view(v) { return IFURI + "/?view=" + v + "&lang=" + lang; }
 
   // [pl, en, href, key]
@@ -31,9 +33,11 @@
     ["Runtime", "Runtime", view("runtime"), "runtime"],
     ["Dokumentacja", "Docs", DOCS, "docs"],
     ["Connectory", "Connectors", CONNECT, "connect"],
+    ["Przykłady", "Examples", EXAMPLES, "examples"],
     ["Flows", "Flows", view("flows"), "flows"],
     ["Sieć", "Network", view("network"), "network"],
-    ["Pobieranie", "Download", GET, "download"]
+    ["Pobieranie", "Download", GET, "download"],
+    ["Roadmap", "Roadmap", ROADMAP, "roadmap"]
   ];
 
   var host = location.hostname.replace(/^www\./, "");
@@ -42,6 +46,8 @@
     if (host === "connect.ifuri.com") return key === "connect";
     if (host === "get.ifuri.com") return key === "download";
     if (host === "docs.ifuri.com") return key === "docs";
+    if (host === "roadmap.ifuri.com") return key === "roadmap";
+    if (host === "examples.ifuri.com") return key === "examples";
     if (host === "ifuri.com") {
       if (key === "docs") return /urirun|\/docs/.test(location.pathname);
       return key === curView;
