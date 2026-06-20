@@ -169,7 +169,7 @@ records:
 curl -fsSLO https://get.ifuri.com/node.sh
 curl -fsSL  https://get.ifuri.com/node.sh.sha256 | sha256sum -c -   # expects: node.sh: OK
 bash node.sh --help            # inspect before running; use --no-start / --dry-run to preview
-bash scripts/smoke-node.sh     # local install + health smoke; uses local urirun checkout if present
+bash scripts/smoke-node.sh     # local install + health smoke; uses sibling ../urirun checkout if present
 bash scripts/smoke-service.sh  # optional Linux systemd --user smoke
 ```
 

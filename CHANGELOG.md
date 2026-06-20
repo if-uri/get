@@ -10,3 +10,5 @@
 ### Changed
 - Document `get.ifuri.com` as the bootstrap entry point for `urirun node`
   participation in the ifURI host/node ecosystem.
+- Use the sibling `if-uri/urirun` checkout as the default local smoke-test
+  fallback instead of the old `tellmesh/urihandler` path.

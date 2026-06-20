@@ -26,7 +26,7 @@ PY
   )"
 fi
 
-LOCAL_URIRUN="$ROOT/../../tellmesh/urihandler/adapters/python"
+LOCAL_URIRUN="${LOCAL_URIRUN:-$ROOT/../urirun/adapters/python}"
 if [ -z "${URIRUN_GIT_URL:-}" ] && [ -f "$LOCAL_URIRUN/pyproject.toml" ]; then
   export URIRUN_GIT_URL="$LOCAL_URIRUN"
 fi
