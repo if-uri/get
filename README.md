@@ -174,3 +174,15 @@ bash scripts/smoke-service.sh  # optional Linux systemd --user smoke
 ```
 
 Short link: **https://get.ifuri.com/app** → latest desktop release.
+
+## Related projects
+
+- Runtime: [tellmesh/urirun](https://github.com/tellmesh/urirun)
+- App/host: [if-uri/app](https://github.com/if-uri/app)
+- Public docs: [if-uri/docs](https://github.com/if-uri/docs)
+- Connector hub: [connect.ifuri.com](https://connect.ifuri.com)
+- Examples: [if-uri/examples](https://github.com/if-uri/examples)
+- Current work summary:
+  [work-summary-2026-06-20](https://github.com/if-uri/docs/blob/main/work-summary-2026-06-20.md)
+
+Repository notes: [TODO.md](TODO.md) · [CHANGELOG.md](CHANGELOG.md)
