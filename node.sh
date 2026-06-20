@@ -14,6 +14,7 @@ EXECUTE=1
 PORT_EXPLICIT=0
 UPGRADE=0
 SERVICE=0
+CONNECTORS="${URIRUN_NODE_CONNECTORS:-}"
 
 usage() {
   cat <<'USAGE'
@@ -31,6 +32,8 @@ Options:
   --python PATH     Python executable. Default: python3.
   --background      Start node with nohup and return.
   --service         Install + enable a boot service (systemd --user / launchd) and start it.
+  --connectors LIST Comma-separated connector ids to install and merge into the
+                    node registry, e.g. --connectors http-check,time-tools.
   --dry-run         Start node without executing command routes.
   --no-start        Install and configure, but do not start the node.
   --upgrade         Reuse existing venv: upgrade urirun, recompile, restart if running.
@@ -44,6 +47,7 @@ Environment:
   URIRUN_NODE_PORT  Node HTTP port.
   URIRUN_NODE_BIND  Node bind address.
   URIRUN_NODE_SERVICE_NAME  systemd/launchd service name. Default: urirun-node.
+  URIRUN_NODE_CONNECTORS  Comma-separated connector ids to install (same as --connectors).
 USAGE
 }
 
@@ -107,6 +111,11 @@ while [ "$#" -gt 0 ]; do
     --service)
       SERVICE=1
       shift
+      ;;
+    --connectors)
+      [ "$#" -ge 2 ] || die "--connectors requires a comma-separated list"
+      CONNECTORS="$2"
+      shift 2
       ;;
     --help|-h)
       usage
@@ -200,6 +209,32 @@ mkdir -p "$INSTALL_DIR"
 "$PYTHON_PATH" -m venv "$VENV_DIR" || die "python venv failed; install python3-venv and retry"
 "$VENV_DIR/bin/python" -m pip install --upgrade pip
 "$VENV_DIR/bin/python" -m pip install --upgrade "$URIRUN_GIT_URL"
+
+# Optionally install connector packages and collect their bindings to merge into
+# the node registry. A connector failure warns and is skipped; the node still
+# installs with its built-in routes.
+CONNECTOR_BINDINGS=()
+if [ -n "$CONNECTORS" ]; then
+  IFS=',' read -r -a _CONN_LIST <<< "$CONNECTORS"
+  for _c in "${_CONN_LIST[@]}"; do
+    _c="$(printf '%s' "$_c" | sanitize_name)"
+    [ -n "$_c" ] || continue
+    printf '==> Installing connector: %s\n' "$_c"
+    if ! "$VENV_DIR/bin/python" -m pip install --upgrade \
+        "git+https://github.com/if-uri/urirun-connector-$_c.git" >/dev/null 2>&1; then
+      printf '    warning: could not install connector "%s"; skipping\n' "$_c" >&2
+      continue
+    fi
+    _mod="urirun_connector_$(printf '%s' "$_c" | tr '-' '_')"
+    _cb="$INSTALL_DIR/connector-$_c.bindings.json"
+    if "$VENV_DIR/bin/python" -c "import json,sys; from $_mod import urirun_bindings; json.dump(urirun_bindings(), open(sys.argv[1],'w'))" "$_cb" 2>/dev/null; then
+      CONNECTOR_BINDINGS+=("$_cb")
+      printf '    bindings exported: %s\n' "$_cb"
+    else
+      printf '    warning: connector "%s" exposes no urirun_bindings(); skipping\n' "$_c" >&2
+    fi
+  done
+fi
 
 cat > "$BINDINGS" <<JSON
 {
@@ -336,7 +371,8 @@ cat > "$BINDINGS" <<JSON
 JSON
 
 "$VENV_DIR/bin/urirun" validate "$BINDINGS" >/dev/null
-"$VENV_DIR/bin/urirun" compile "$BINDINGS" --out "$REGISTRY" >/dev/null
+"$VENV_DIR/bin/urirun" compile "$BINDINGS" \
+  ${CONNECTOR_BINDINGS[@]+"${CONNECTOR_BINDINGS[@]}"} --out "$REGISTRY" >/dev/null
 
 INIT_ARGS=(node init --config "$NODE_CONFIG" --name "$NODE_NAME" --registry "$REGISTRY" --host "$BIND" --port "$PORT")
 if [ "$EXECUTE" -eq 1 ]; then
