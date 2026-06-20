@@ -16,7 +16,7 @@ param(
   [string]$Bind = "0.0.0.0",
   [string]$Dir = (Join-Path $HOME ".urirun-node"),
   [string]$Python = "python",
-  [string]$Ref = $(if ($env:URIRUN_REF) { $env:URIRUN_REF } else { "v0.3.13" }),
+  [string]$Ref = $(if ($env:URIRUN_REF) { $env:URIRUN_REF } else { "v0.3.14" }),
   [switch]$Service,
   [switch]$DryRun,
   [switch]$NoStart,
@@ -37,7 +37,7 @@ Install and run an urirun node (Windows).
   -Bind ADDR     Bind address. Default: 0.0.0.0.
   -Dir PATH      Install directory. Default: %USERPROFILE%\.urirun-node.
   -Python PATH   Python launcher. Default: python.
-  -Ref REF       urirun git tag/branch. Default: v0.3.13 (env: URIRUN_REF).
+  -Ref REF       urirun git tag/branch. Default: v0.3.14 (env: URIRUN_REF).
   -Service       Register a logon Scheduled Task (survives reboot).
   -DryRun        Configure node without executing command routes.
   -NoStart       Install and configure, but do not start.

@@ -108,15 +108,29 @@ export OPENAI_API_KEY=...
 After starting (`--background` or `--service`), the installer health-checks
 `http://127.0.0.1:PORT/health` and prints the LAN URL and URI routes.
 
+Service name can be changed without editing the script:
+
+```bash
+curl -fsSL https://get.ifuri.com/node.sh | \
+  URIRUN_NODE_SERVICE_NAME=urirun-node-laptop bash -s -- --name laptop --service
+```
+
+Local smoke test:
+
+```bash
+make smoke
+make service-smoke  # Linux only: creates a temporary systemd --user unit, then removes it
+```
+
 ## Pinned urirun version
 
-`node.sh` pins the installed `urirun` to a released tag (default `v0.3.13`) for
+`node.sh` pins the installed `urirun` to a released tag (default `v0.3.14`) for
 reproducible installs rather than tracking `@main`. Override it with the
 `URIRUN_REF` environment variable (a git tag or branch), or `URIRUN_GIT_URL` for
 a custom source:
 
 ```bash
-curl -fsSL https://get.ifuri.com/node.sh | URIRUN_REF=v0.3.13 bash
+curl -fsSL https://get.ifuri.com/node.sh | URIRUN_REF=v0.3.14 bash
 ```
 
 The Windows installer (`node.ps1`) pins the same default and accepts `-Ref` (or
@@ -155,6 +169,8 @@ records:
 curl -fsSLO https://get.ifuri.com/node.sh
 curl -fsSL  https://get.ifuri.com/node.sh.sha256 | sha256sum -c -   # expects: node.sh: OK
 bash node.sh --help            # inspect before running; use --no-start / --dry-run to preview
+bash scripts/smoke-node.sh     # local install + health smoke; uses local urirun checkout if present
+bash scripts/smoke-service.sh  # optional Linux systemd --user smoke
 ```
 
 Short link: **https://get.ifuri.com/app** → latest desktop release.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-URIRUN_REF="${URIRUN_REF:-v0.3.13}"
+URIRUN_REF="${URIRUN_REF:-v0.3.14}"
 URIRUN_GIT_URL="${URIRUN_GIT_URL:-git+https://github.com/tellmesh/urirun.git@${URIRUN_REF}#subdirectory=adapters/python}"
 INSTALL_DIR="${URIRUN_NODE_DIR:-$HOME/.urirun-node}"
 NODE_NAME="${URIRUN_NODE_NAME:-$(hostname 2>/dev/null || echo node)}"
@@ -37,12 +37,13 @@ Options:
   --help            Show this help.
 
 Environment:
-  URIRUN_REF        Git tag or branch for the default urirun source. Default: v0.3.13.
+  URIRUN_REF        Git tag or branch for the default urirun source. Default: v0.3.14.
   URIRUN_GIT_URL    Git source for urirun Python package.
   URIRUN_NODE_DIR   Install directory.
   URIRUN_NODE_NAME  Node name.
   URIRUN_NODE_PORT  Node HTTP port.
   URIRUN_NODE_BIND  Node bind address.
+  URIRUN_NODE_SERVICE_NAME  systemd/launchd service name. Default: urirun-node.
 USAGE
 }
 
@@ -135,6 +136,10 @@ REGISTRY="$INSTALL_DIR/registry.json"
 NODE_CONFIG="$INSTALL_DIR/node.json"
 RUNNER="$INSTALL_DIR/run-node.sh"
 LOG_FILE="$INSTALL_DIR/node.log"
+SERVICE_NAME="${URIRUN_NODE_SERVICE_NAME:-urirun-node}"
+SERVICE_NAME="${SERVICE_NAME%.service}"
+SERVICE_NAME="$(printf '%s' "$SERVICE_NAME" | sanitize_name)"
+[ -n "$SERVICE_NAME" ] || SERVICE_NAME="urirun-node"
 
 if [ "$UPGRADE" -eq 1 ]; then
   [ -d "$VENV_DIR" ] || die "no existing install at $INSTALL_DIR (run without --upgrade first)"
@@ -373,8 +378,9 @@ if [ "$SERVICE" -eq 1 ]; then
     Linux)
       command -v systemctl >/dev/null 2>&1 || die "--service needs systemd (systemctl not found); use --background"
       UNIT_DIR="$HOME/.config/systemd/user"
+      SERVICE_UNIT="$SERVICE_NAME.service"
       mkdir -p "$UNIT_DIR"
-      cat > "$UNIT_DIR/urirun-node.service" <<UNIT
+      cat > "$UNIT_DIR/$SERVICE_UNIT" <<UNIT
 [Unit]
 Description=urirun node ($NODE_NAME)
 After=network-online.target
@@ -390,21 +396,22 @@ RestartSec=5
 WantedBy=default.target
 UNIT
       systemctl --user daemon-reload
-      systemctl --user enable --now urirun-node.service
+      systemctl --user enable --now "$SERVICE_UNIT"
       loginctl enable-linger "$USER" >/dev/null 2>&1 || true
-      printf '==> systemd user service enabled: urirun-node.service (survives reboot)\n'
-      printf '    logs:  journalctl --user -u urirun-node -f\n'
-      printf '    stop:  systemctl --user disable --now urirun-node.service\n'
+      printf '==> systemd user service enabled: %s (survives reboot)\n' "$SERVICE_UNIT"
+      printf '    logs:  journalctl --user -u %s -f\n' "$SERVICE_UNIT"
+      printf '    stop:  systemctl --user disable --now %s\n' "$SERVICE_UNIT"
       ;;
     Darwin)
       PLIST_DIR="$HOME/Library/LaunchAgents"
       mkdir -p "$PLIST_DIR"
-      PLIST="$PLIST_DIR/com.ifuri.urirun-node.plist"
+      PLIST_LABEL="com.ifuri.$SERVICE_NAME"
+      PLIST="$PLIST_DIR/$PLIST_LABEL.plist"
       cat > "$PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.ifuri.urirun-node</string>
+  <key>Label</key><string>$PLIST_LABEL</string>
   <key>ProgramArguments</key><array><string>$RUNNER</string></array>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
@@ -414,7 +421,7 @@ UNIT
 PLIST
       launchctl unload "$PLIST" >/dev/null 2>&1 || true
       launchctl load "$PLIST"
-      printf '==> launchd agent loaded: com.ifuri.urirun-node (survives reboot)\n'
+      printf '==> launchd agent loaded: %s (survives reboot)\n' "$PLIST_LABEL"
       printf '    stop:  launchctl unload %s\n' "$PLIST"
       ;;
     *)
