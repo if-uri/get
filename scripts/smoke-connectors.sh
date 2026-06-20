@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Smoke test: install a node with connectors and verify the node serves the
 # connector routes plus the MCP tools and A2A card projections.
 #

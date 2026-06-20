@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 set -Eeuo pipefail
 
 # Install urirun for the host role: the machine that registers and drives URI

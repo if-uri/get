@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Author: Tom Sapletta · https://tom.sapletta.com
+# Part of the ifURI solution.
+
 # Publish get.ifuri.com (static installer landing).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
