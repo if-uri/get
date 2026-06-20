@@ -2,16 +2,18 @@
 
 ## Installer roadmap
 
-- [ ] Add an explicit `--connectors` option to install selected connector
-      packages during node bootstrap.
-- [ ] Print a ready-to-copy `urirun host add-node ...` command after a
-      successful node install.
-- [ ] Add a host installer one-liner next to `node.sh`.
-- [ ] Add a smoke scenario that installs a node, installs `http-check` and
+- [x] Add an explicit `--connectors` option to install selected connector
+      packages during node bootstrap. (node.sh `--connectors`, bindings merged)
+- [x] Print a ready-to-copy `urirun host add-node ...` command after a
+      successful node install. (node.sh prints it after config is written)
+- [x] Add a host installer one-liner next to `node.sh`. (`host.sh`)
+- [x] Add a smoke scenario that installs a node, installs `http-check` and
       `time-tools`, then verifies `/routes`, MCP tools and A2A card output.
-- [ ] Add a documented laptop-to-host LAN setup flow linked from `docs.ifuri.com`.
-- [ ] Keep the default `URIRUN_REF` aligned with the latest tested runtime
-      release tag.
+      (`scripts/smoke-connectors.sh`, `make connector-smoke`; verified live)
+- [x] Add a documented laptop-to-host LAN setup flow linked from `docs.ifuri.com`.
+      (README "Laptop-to-host LAN flow" + docs.ifuri.com/host-node-lan.html)
+- [x] Keep the default `URIRUN_REF` aligned with the latest tested runtime
+      release tag. (`v0.3.14`)
 
 ## Related resources
 

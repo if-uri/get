@@ -25,6 +25,12 @@ Custom name and port:
 curl -fsSL https://get.ifuri.com/node.sh | bash -s -- --name laptop --port 8765 --background
 ```
 
+With connector packages (installed and merged into the node registry):
+
+```bash
+curl -fsSL https://get.ifuri.com/node.sh | bash -s -- --name laptop --connectors http-check,time-tools --background
+```
+
 Boot service (Linux `systemd --user` / macOS `launchd`), survives reboot:
 
 ```bash
@@ -53,7 +59,35 @@ The installer creates:
 - `~/.urirun-node/node.json`,
 - `~/.urirun-node/run-node.sh`.
 
-## Register the node on a host
+## Host one-liner
+
+Install the host role (the machine that registers and drives nodes) with one
+command. It installs `urirun`, runs `host init`, and can register nodes inline:
+
+```bash
+curl -fsSL https://get.ifuri.com/host.sh | bash -s -- --name studio --add-node laptop=http://192.168.1.20:8765
+```
+
+Start the operator dashboard after setup with `--dashboard`. The installer
+creates `~/.urirun-host/.venv` and `~/.urirun-host/mesh.json`.
+
+## Laptop-to-host LAN flow
+
+A minimal two-machine setup:
+
+```bash
+# 1. On the laptop (the node):
+curl -fsSL https://get.ifuri.com/node.sh | bash -s -- --name laptop --connectors http-check,time-tools --background
+# note the printed: urirun host add-node laptop http://<LAN_IP>:8765
+
+# 2. On the host:
+curl -fsSL https://get.ifuri.com/host.sh | bash -s -- --name studio --add-node laptop=http://<LAN_IP>:8765
+urirun host routes --config ~/.urirun-host/mesh.json
+```
+
+Full operator guide: [docs.ifuri.com/host-node-lan.html](https://docs.ifuri.com/host-node-lan.html).
+
+## Register the node on a host (manual)
 
 On the host computer:
 
@@ -99,6 +133,7 @@ export OPENAI_API_KEY=...
 --python PATH     Python executable. Default: python3.
 --background      Start node with nohup and return.
 --service         Install + enable a boot service (systemd --user / launchd) and start it.
+--connectors LIST Comma-separated connector ids to install and merge (e.g. http-check,time-tools).
 --dry-run         Start the node in non-executing mode.
 --no-start        Install and configure, but do not start the node.
 --upgrade         Reuse existing venv: upgrade urirun, recompile, restart if running.
