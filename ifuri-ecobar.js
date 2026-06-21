@@ -25,12 +25,14 @@
   var DOCS = "https://docs.ifuri.com";
   var ROADMAP = "https://roadmap.ifuri.com";
   var EXAMPLES = "https://examples.ifuri.com";
+  var URIRUN = "https://urirun.com";
   function view(v) { return IFURI + "/?view=" + v + "&lang=" + lang; }
 
   // [pl, en, href, key]
   var items = [
     ["Produkt", "Product", view("product"), "product"],
     ["Runtime", "Runtime", view("runtime"), "runtime"],
+    ["urirun", "urirun", URIRUN, "urirun"],
     ["Dokumentacja", "Docs", DOCS, "docs"],
     ["Connectory", "Connectors", CONNECT, "connect"],
     ["Przykłady", "Examples", EXAMPLES, "examples"],
@@ -48,6 +50,7 @@
     if (host === "docs.ifuri.com") return key === "docs";
     if (host === "roadmap.ifuri.com") return key === "roadmap";
     if (host === "examples.ifuri.com") return key === "examples";
+    if (host === "urirun.com") return key === "urirun";
     if (host === "ifuri.com") {
       if (key === "docs") return /urirun|\/docs/.test(location.pathname);
       return key === curView;
